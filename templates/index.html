@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>远程音量控制</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="card">
+      <h1>🎚️ 电脑音量远程控制</h1>
+      <p class="hint">确保手机和电脑在同一局域网内。</p>
+
+      <div class="status-row">
+        <span>当前音量：<strong id="volume-text">--%</strong></span>
+        <span id="mute-text" class="mute-badge">--</span>
+      </div>
+
+      <input id="volume-slider" type="range" min="0" max="100" step="1" value="0" />
+
+      <div class="buttons">
+        <button id="down-btn">-5</button>
+        <button id="up-btn">+5</button>
+        <button id="mute-btn">静音切换</button>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
