@@ -1,8 +1,8 @@
 @echo off
-setlocal EnableExtensions EnableDelayedExpansion
+setlocal EnableExtensions
 cd /d "%~dp0"
 
-echo [INFO] 工作目录: %cd%
+echo [INFO] Working directory: %cd%
 
 set "PY_CMD="
 where py >nul 2>nul
@@ -16,60 +16,60 @@ if %errorlevel%==0 (
 )
 
 if not defined PY_CMD (
-    echo [ERROR] 未找到 Python 3。请先安装 Python 3.10+，并勾选 "Add python.exe to PATH"。
+    echo [ERROR] Python 3 was not found. Install Python 3.10+ and enable "Add python.exe to PATH".
     goto :failed
 )
 
-echo [INFO] 使用解释器: %PY_CMD%
+echo [INFO] Python command: %PY_CMD%
 
 if not exist .venv (
-    echo [INFO] 首次运行，正在创建虚拟环境...
+    echo [INFO] Creating virtual environment...
     %PY_CMD% -m venv .venv
     if errorlevel 1 (
-        echo [ERROR] 创建虚拟环境失败。
+        echo [ERROR] Failed to create virtual environment.
         goto :failed
     )
 )
 
 call .venv\Scripts\activate
 if errorlevel 1 (
-    echo [ERROR] 激活虚拟环境失败。
+    echo [ERROR] Failed to activate virtual environment.
     goto :failed
 )
 
-echo [INFO] 安装/更新依赖（首次可能较慢）...
+echo [INFO] Installing dependencies (first run may take a while)...
 python -m pip install -U pip
 if errorlevel 1 (
-    echo [ERROR] pip 更新失败。
+    echo [ERROR] Failed to upgrade pip.
     goto :failed
 )
 
 pip install -r requirements.txt
 if errorlevel 1 (
-    echo [ERROR] 依赖安装失败，请检查网络或 Python 版本。
+    echo [ERROR] Failed to install requirements. Check network and Python version.
     goto :failed
 )
 
 echo.
-echo [INFO] 服务即将启动，若看到 "Running on http://0.0.0.0:5000" 说明已成功。
-echo [INFO] 本机访问: http://127.0.0.1:5000/
-echo [INFO] 手机访问: http://你的电脑局域网IP:5000/
+echo [INFO] Starting server...
+echo [INFO] Local URL: http://127.0.0.1:5000/
+echo [INFO] LAN URL:   http://YOUR_PC_LAN_IP:5000/
 echo.
 python app.py
 
 if errorlevel 1 (
     echo.
-    echo [ERROR] 服务异常退出。请把上方报错截图发给我，我可继续帮你定位。
+    echo [ERROR] Server exited with an error. Please send the full log output.
     goto :failed
 )
 
 echo.
-echo [INFO] 服务已正常退出。
+echo [INFO] Server exited normally.
 pause
 exit /b 0
 
 :failed
 echo.
-echo [HINT] 黑窗口不会立即关闭，请查看上方错误信息。
+echo [HINT] Window will stay open. Read the error message above.
 pause
 exit /b 1
