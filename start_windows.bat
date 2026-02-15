@@ -1,26 +1,51 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
 
 echo [INFO] Working directory: %cd%
 
 set "PY_CMD="
+for %%V in (3.12 3.11 3.10) do (
+    py -%%V -c "import sys" >nul 2>nul
+    if !errorlevel! == 0 (
+        set "PY_CMD=py -%%V"
+        goto :python_found
+    )
+)
+
 where py >nul 2>nul
 if %errorlevel%==0 (
     set "PY_CMD=py -3"
-) else (
+)
+
+if not defined PY_CMD (
     where python >nul 2>nul
     if %errorlevel%==0 (
         set "PY_CMD=python"
     )
 )
 
+:python_found
 if not defined PY_CMD (
     echo [ERROR] Python 3 was not found. Install Python 3.10+ and enable "Add python.exe to PATH".
     goto :failed
 )
 
 echo [INFO] Python command: %PY_CMD%
+%PY_CMD% -c "import sys; print('[INFO] Python version: %d.%d.%d' % sys.version_info[:3])"
+
+set "RECREATE_VENV=0"
+if exist .venv\Scripts\python.exe (
+    .venv\Scripts\python.exe -c "import sys; raise SystemExit(0 if sys.version_info < (3, 13) else 1)"
+    if errorlevel 1 (
+        echo [WARN] Existing .venv uses Python 3.13+, recreating for compatibility with pycaw/comtypes.
+        set "RECREATE_VENV=1"
+    )
+)
+
+if "%RECREATE_VENV%"=="1" (
+    rmdir /s /q .venv
+)
 
 if not exist .venv (
     echo [INFO] Creating virtual environment...
