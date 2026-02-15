@@ -62,8 +62,6 @@ python app.py
 - **双击后黑窗口过一会儿消失**
   - 新版 `start_windows.bat` 会自动暂停并显示错误。
   - 常见原因：未安装 Python，或依赖下载失败。
-- **双击后看到乱码并提示“不是内部或外部命令”**
-  - 请使用仓库内最新 `start_windows.bat`（已改为纯 ASCII 输出，避免 Windows 编码兼容问题）。
 - **服务启动报错缺依赖**
   - 执行：`pip install -r requirements.txt`
 - **在 Linux/macOS 运行失败**
